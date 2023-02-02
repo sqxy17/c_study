@@ -317,7 +317,7 @@
 //8.文件操作函数（整行）
 // fgets()        函数定义：char* fgets(char* string,int n,FILE* stream)             从磁盘输入到内存，操控的是输入流
 //第一个参数：读取的字符串将要放入的位置       第二个参数：读取多少个字符              第三个字符：将要读取的流的位置，从这里面开始读
-//读取的实际的字符是n-1个，因为要在最后自动加上\0
+//读取的实际的字符是n-1个，因为要在最后自动加上\0    这个返回值数据存放的位置
 
 // fputs()        函数定义：int fputs(const char* string,FILE* stream);第一个参数：自己的字符串    第二个参数：把这个字符串整进去的这个流中
 //写一个字符串传入到这个流中
@@ -500,7 +500,7 @@
 //第一个参数：   被写入数据的地址    第二个参数：写入的元素的大小（单个字符的字节数）     第三个参数写入的元素的个数       第四个参数：流的地址
 
 //fread() 函数定义：换了一下函数的名字，参数都是一样的。不同的是，这个函数是将文件中的内容读出并复制到给定的变量当中去
-//这个函数的返回值就是读取文件中的元素的个数。这个返回值和count有关，count假如是10，但是里面只有五个元素，就会返回5，
+//这个函数的返回值就是读取文件中的数据块的个数。这个返回值和count有关，count假如是10，但是里面只有五个元素，就会返回5，
 
 //#include<stdio.h>
 //#include<string.h>
@@ -600,7 +600,7 @@
 
 
 
-//13.ftell函数   函数定义：long int ftell(FILE* stream);
+//13.ftell函数   函数定义：long int ftell(FILE* stream);       tell告知---告知当前指针的偏移量
 //这个函数是用来测试文件指针当前的的位置相对于文件开头的位置的偏移量
 //#include<stdio.h>
 //#include<string.h>
@@ -632,7 +632,7 @@
 
 
 
-//13.rewind()函数            函数定义：void rewind(FILE* stream)
+//13.rewind()函数            函数定义：void rewind(FILE* stream)          wind---迂回缠绕     re---再一次又一次    将这个指针重置到文件的起始的位置
 //让当前的文件指针回到文件的起始位置
 //#include<stdio.h>
 //#include<string.h>
@@ -680,7 +680,8 @@
 //    }
 //    char ch;
 //    ch=fgetc(pf);//打开的文件最后面一个字节是EOF也就是文件结束标志     这个字符也就是-1
-//    printf("%d\n",ch);
+//    if(ch==EOF)
+//        printf("%d\n",ch);
 //
 //    fclose(pf);
 //    pf=NULL;
@@ -691,10 +692,11 @@
 //而是应当应用于文件读取已经结束的时候。这个结束的原因是什么，是因为读取失败？还是因为遇到文件尾结束
 
 //文本文件读取是否结束，判断返回值是否为EOF(用fgetc)  或者NULL（fgets)
-//也就是fgetc判断返回是否为EOF    fgets判断返回值是否为NULL，
-//fgetc在遇见没有字符可读取的时候会读取EOF这个就在文件的最后。         fgetc在遇见空白行的时候就会读取NULL;
+//也就是fgetc判断返回是否为EOF    fgets判断返回值是否为NULL，              fgetc--返回的是读取的字符的ascll
+//fgetc在遇见没有字符可读取的时候会读取EOF这个就在文件的最后。         fgets在遇见空白行的时候就会读取NULL;
 
-//二级制文件判断是否读取结束，判断返回值是否小于实际要读取的个数
+//二进制文件判断是否读取结束，判断返回值是否小于实际要读取的个数
+//因为fread返回的是读取的实际的数据块，如果想要读取10个，但是返回值为9，就说明里面的数据块只有9个，也就是读取完了
 
 
 
@@ -711,7 +713,7 @@
 //        perror("读取错误");
 //    }
 //    int i=0;
-//    while((c=fgetc(pf))!=EOF && i<=3)//二进制文件就是这样的  fread(&b,sizeof(double0,1,pf)>=1
+//    while((c=fgetc(pf))!=EOF && i<=3)//二进制文件就是这样的  fread(&b,sizeof(double),1,pf)>=1
 //    {
 //        printf("%c\n ferror函数值：%d\n",c,ferror(pf));//printf("%lf",b);
 //        i++;
@@ -729,6 +731,7 @@
 //    {
 //        printf("END of file reached successfully\n %d",feof(pf));//遇见了一个文件的结束标志
 ////        feof只能判断文件末尾的NULL和EOF，如果取几个有限的字符就停止函数，这个feof就不会进行判断。
+//             也就是说，这个文件指针只有指向的是文件的末尾的时候并且正常停止的时候，这个feof（pf）才会返回1.其余情况返回的是0
 //    }
 //
 //    fclose(pf);
